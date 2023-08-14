@@ -8,6 +8,7 @@ class Lecturer extends Person {
         super(firstName, lastName);
         this.id = id;
         this.degree = degree;
+
     }
 
     public int getId() {
@@ -17,4 +18,5 @@ class Lecturer extends Person {
     public String getDegree() {
         return degree;
     }
+
 }

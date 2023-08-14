@@ -1,21 +1,18 @@
 package pl.javastart.task;
 
 class Student extends Person {
-    protected int index;
-    protected String groupCode;
+    private int index;
+    private String firstName;
+    private String lastName;
 
-    public Student(int index, String groupCode, String firstName, String lastName) {
+    public Student(int index, String firstName, String lastName) {
         super(firstName, lastName);
         this.index = index;
-        this.groupCode = groupCode;
+
     }
 
     public int getIndex() {
         return index;
-    }
-
-    public String getGroupCode() {
-        return groupCode;
     }
 
 }

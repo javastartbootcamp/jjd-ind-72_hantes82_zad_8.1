@@ -1,16 +1,18 @@
 package pl.javastart.task;
 
-import java.util.Arrays;
+import java.util.*;
 
 class Group {
     private String code;
     private String name;
-    private int lecturerId;
+    private Lecturer lecturer;
+    private List<Student> students = new ArrayList<>();
+    private Map<Integer, Double> grades = new HashMap<>();
 
-    public Group(String code, String name, int lecturerId) {
+    public Group(String code, String name, Lecturer lecturer) {
         this.code = code;
         this.name = name;
-        this.lecturerId = lecturerId;
+        this.lecturer = lecturer;
     }
 
     public String getCode() {
@@ -21,7 +23,35 @@ class Group {
         return name;
     }
 
-    public int getLecturerId() {
-        return lecturerId;
+    public Lecturer getLecturer() {
+        return lecturer;
+    }
+
+    public List<Student> getStudents() {
+        return students;
+    }
+
+    public void addStudent(Student student) {
+        students.add(student);
+    }
+
+    public boolean hasStudent(Student student) {
+        return students.contains(student);
+    }
+
+    public void addGrade(int studentIndex, double grade) {
+        grades.put(studentIndex, grade);
+    }
+
+    public boolean hasGrade(int studentIndex) {
+        return grades.containsKey(studentIndex);
+    }
+
+    public double getGrade(int studentIndex) {
+        return grades.getOrDefault(studentIndex, 0.0);
+    }
+
+    public Map<Integer, Double> getGrades() {
+        return grades;
     }
 }
