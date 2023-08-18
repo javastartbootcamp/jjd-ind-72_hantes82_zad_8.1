@@ -32,7 +32,11 @@ class Group {
     }
 
     public void addStudent(Student student) {
-        students.add(student);
+        if (students.contains(student)) {
+            System.out.printf("Student o indeksie %d jest już w grupie %s", student.getIndex(), this.code);
+        } else {
+            students.add(student);
+        }
     }
 
     public boolean hasStudent(Student student) {

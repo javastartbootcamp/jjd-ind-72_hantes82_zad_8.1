@@ -61,11 +61,23 @@ public class UniversityApp {
      * @param firstName - imię studenta
      * @param lastName  - nazwisko studenta
      */
-    public void addStudentToGroup(int index, String groupCode, String firstName, String lastName) {
+//    public void addStudentToGroup(int index, String groupCode, String firstName, String lastName) {
+//        if (groups.containsKey(groupCode)) {
+//            Group group = groups.get(groupCode);
+//            Student student = new Student(index, firstName, lastName);
+//            students.put(index, student);
+//            groups.get(groupCode).addStudent(student);
+//        } else {
+//            System.out.println("Grupa " + groupCode + " nie istnieje");
+//        }
+//    }
+
+        public void addStudentToGroup(int index, String groupCode, String firstName, String lastName) {
         if (groups.containsKey(groupCode)) {
+            Group group = groups.get(groupCode);
             Student student = new Student(index, firstName, lastName);
             students.put(index, student);
-            groups.get(groupCode).addStudent(student);
+            group.addStudent(student);
         } else {
             System.out.println("Grupa " + groupCode + " nie istnieje");
         }
@@ -117,7 +129,7 @@ public class UniversityApp {
      */
 
     public void addGrade(int studentIndex, String groupCode, double grade) {
-        if (students.containsKey(studentIndex) && groups.containsKey(groupCode)) {
+        if (groups.containsKey(groupCode)) {
             Student student = students.get(studentIndex);
             Group group = groups.get(groupCode);
             if (group.hasStudent(student)) {
@@ -129,7 +141,10 @@ public class UniversityApp {
                 }
             } else {
                 System.out.println("Student o indeksie " + studentIndex + " nie jest zapisany do grupy " + groupCode);
+
             }
+        } else if (!groups.containsKey(groupCode)) {
+            System.out.printf("Grupa %s nie istnieje", groupCode);
         }
     }
 
@@ -170,6 +185,8 @@ public class UniversityApp {
                 Student student = students.get(entry.getKey());
                 System.out.println(student.getIndex() + " " + student.getFirstName() + " " + student.getLastName() + ": " + entry.getValue());
             }
+        } else {
+            System.out.printf("Grupa %s nie istnieje", groupCode);
         }
     }
 

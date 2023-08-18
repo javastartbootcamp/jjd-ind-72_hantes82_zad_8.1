@@ -1,5 +1,7 @@
 package pl.javastart.task;
 
+import java.util.Objects;
+
 class Student extends Person {
     private int index;
     private String firstName;
@@ -15,4 +17,15 @@ class Student extends Person {
         return index;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Student student)) return false;
+        return index == student.index;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(index);
+    }
 }
