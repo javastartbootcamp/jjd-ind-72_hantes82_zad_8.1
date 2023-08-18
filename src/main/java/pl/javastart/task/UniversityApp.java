@@ -1,6 +1,11 @@
 package pl.javastart.task;
 
+import java.util.*;
+
 public class UniversityApp {
+    private Map<Integer, Lecturer> lecturers = new HashMap<>();
+    private Map<String, Group> groups = new HashMap<>();
+    private Map<Integer, Student> students = new HashMap<>();
 
     /**
      * Tworzy prowadzącego zajęcia.
@@ -12,8 +17,13 @@ public class UniversityApp {
      * @param firstName - imię prowadzącego
      * @param lastName  - nazwisko prowadzącego
      */
-    public void createLecturer(int id, String degree, String firstName, String lastName) {
 
+    public void createLecturer(int id, String degree, String firstName, String lastName) {
+        if (!lecturers.containsKey(id)) {
+            lecturers.put(id, new Lecturer(id, degree, firstName, lastName));
+        } else {
+            System.out.println("Prowadzący z id " + id + " już istnieje");
+        }
     }
 
     /**
@@ -25,12 +35,21 @@ public class UniversityApp {
      *
      * @param code       - unikalny kod grupy
      * @param name       - nazwa przedmiotu (np. "Podstawy programowania")
-     * @param lecturerId - identyfikator prowadzącego. Musi zostać wcześniej utworzony za pomocą metody {@link #createLecturer(int, String, String, String)}
+     * @param lecturerId - identyfikator prowadzącego. Musi zostać wcześniej utworzony za pomocą metody {@link #createLecturer(int,
+     *                   String, String, String)}
      */
+
     public void createGroup(String code, String name, int lecturerId) {
-
+        if (!groups.containsKey(code)) {
+            if (lecturers.containsKey(lecturerId)) {
+                groups.put(code, new Group(code, name, lecturers.get(lecturerId)));
+            } else {
+                System.out.println("Prowadzący o id " + lecturerId + " nie istnieje");
+            }
+        } else {
+            System.out.println("Grupa " + code + " już istnieje");
+        }
     }
-
 
     /**
      * Dodaje studenta do grupy zajęciowej.
@@ -42,10 +61,27 @@ public class UniversityApp {
      * @param firstName - imię studenta
      * @param lastName  - nazwisko studenta
      */
-    public void addStudentToGroup(int index, String groupCode, String firstName, String lastName) {
+//    public void addStudentToGroup(int index, String groupCode, String firstName, String lastName) {
+//        if (groups.containsKey(groupCode)) {
+//            Group group = groups.get(groupCode);
+//            Student student = new Student(index, firstName, lastName);
+//            students.put(index, student);
+//            groups.get(groupCode).addStudent(student);
+//        } else {
+//            System.out.println("Grupa " + groupCode + " nie istnieje");
+//        }
+//    }
 
+        public void addStudentToGroup(int index, String groupCode, String firstName, String lastName) {
+        if (groups.containsKey(groupCode)) {
+            Group group = groups.get(groupCode);
+            Student student = new Student(index, firstName, lastName);
+            students.put(index, student);
+            group.addStudent(student);
+        } else {
+            System.out.println("Grupa " + groupCode + " nie istnieje");
+        }
     }
-
 
     /**
      * Wyświetla informacje o grupie w zadanym formacie.
@@ -62,7 +98,19 @@ public class UniversityApp {
      * @param groupCode - kod grupy, dla której wyświetlić informacje
      */
     public void printGroupInfo(String groupCode) {
-
+        if (groups.containsKey(groupCode)) {
+            Group group = groups.get(groupCode);
+            System.out.println("Kod: " + group.getCode());
+            System.out.println("Nazwa: " + group.getName());
+            System.out.println("Prowadzący: " + group.getLecturer().getDegree() + " " + group.getLecturer().getFirstName()
+                    + " " + group.getLecturer().getLastName());
+            System.out.println("Uczestnicy:");
+            for (Student student : group.getStudents()) {
+                System.out.println(student.getIndex() + " " + student.getFirstName() + " " + student.getLastName());
+            }
+        } else {
+            System.out.println("Grupa " + groupCode + " nie znaleziona");
+        }
     }
 
     /**
@@ -79,8 +127,25 @@ public class UniversityApp {
      * @param groupCode    - kod grupy
      * @param grade        - ocena
      */
-    public void addGrade(int studentIndex, String groupCode, double grade) {
 
+    public void addGrade(int studentIndex, String groupCode, double grade) {
+        if (groups.containsKey(groupCode)) {
+            Student student = students.get(studentIndex);
+            Group group = groups.get(groupCode);
+            if (group.hasStudent(student)) {
+                if (!group.hasGrade(studentIndex)) {
+                    group.addGrade(studentIndex, grade);
+                } else {
+                    System.out.println("Student o indeksie " + studentIndex + " ma już wystawioną ocenę dla grupy "
+                            + groupCode);
+                }
+            } else {
+                System.out.println("Student o indeksie " + studentIndex + " nie jest zapisany do grupy " + groupCode);
+
+            }
+        } else if (!groups.containsKey(groupCode)) {
+            System.out.printf("Grupa %s nie istnieje", groupCode);
+        }
     }
 
     /**
@@ -92,7 +157,16 @@ public class UniversityApp {
      * @param index - numer indesku studenta dla którego wyświetlić oceny
      */
     public void printGradesForStudent(int index) {
-
+        if (students.containsKey(index)) {
+            Student student = students.get(index);
+            for (Group group : groups.values()) {
+                if (group.hasStudent(student)) {
+                    if (group.hasGrade(index)) {
+                        System.out.println(group.getName() + ": " + group.getGrade(index));
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -105,7 +179,15 @@ public class UniversityApp {
      * @param groupCode - kod grupy, dla której wyświetlić oceny
      */
     public void printGradesForGroup(String groupCode) {
-
+        if (groups.containsKey(groupCode)) {
+            Group group = groups.get(groupCode);
+            for (Map.Entry<Integer, Double> entry : group.getGrades().entrySet()) {
+                Student student = students.get(entry.getKey());
+                System.out.println(student.getIndex() + " " + student.getFirstName() + " " + student.getLastName() + ": " + entry.getValue());
+            }
+        } else {
+            System.out.printf("Grupa %s nie istnieje", groupCode);
+        }
     }
 
     /**
@@ -116,7 +198,11 @@ public class UniversityApp {
      * 179234 Dawid Donald
      * 189521 Anna Kowalska
      */
-    public void printAllStudents() {
 
+    public void printAllStudents() {
+        Set<Student> uniqueStudents = new HashSet<>(students.values());
+        for (Student student : uniqueStudents) {
+            System.out.println(student.getIndex() + " " + student.getFirstName() + " " + student.getLastName());
+        }
     }
 }
